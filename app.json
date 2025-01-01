@@ -4,7 +4,12 @@
     "slug": "waterlogger-v2",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/kidneyCareLogo.png",
+    "splash": {
+      "image": "./assets/images/kidneyCareLogo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
