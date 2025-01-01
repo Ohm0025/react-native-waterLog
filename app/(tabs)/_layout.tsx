@@ -3,10 +3,16 @@ import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
+    <Tabs
+      screenOptions={{
+        tabBarStyle: { backgroundColor: "white" },
+        tabBarActiveTintColor: "blue",
+      }}
+    >
       <Tabs.Screen
-        name="dashboard"
+        name="index"
         options={{
+          title: "Dashboard",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="dashboard" color={color} />
           ),
@@ -16,6 +22,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="calendar"
         options={{
+          title: "Calendar",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="calendar" color={color} />
           ),
@@ -25,6 +32,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="setting"
         options={{
+          title: "Setting",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="cog" color={color} />
           ),
