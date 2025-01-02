@@ -3,23 +3,36 @@ import { differeceTime, getNowTime, setNextTime } from "@/utils/handleDate";
 import { useEffect } from "react";
 import { Alert, Text } from "react-native";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
+import StatBoard from "./StatBoard";
 
 type TimeCircleProps = {
   radius: number;
   isComplete?: boolean;
+  targetAmount: number;
+  currentAmount: number;
 };
 
-export default function TimeCircle({ radius, isComplete }: TimeCircleProps) {
-  const { currentTime, targetTime, setTargetTime, setCurrentTime } =
+export default function TimeCircle({
+  radius,
+  isComplete,
+  targetAmount,
+  currentAmount,
+}: TimeCircleProps) {
+  const { currentTime, targetTime, timeEnd, setTargetTime, setCurrentTime } =
     timeStore();
 
-  const createTwoButtonAlert = () =>
-    Alert.alert(
-      "แจ้งเตือน",
-      "ให้ดื่มน้ำแล้วนะ เวลา " + targetTime,
+  const createTwoButtonAlert = () => {
+    if (
+      targetTime === "" ||
+      targetTime > timeEnd ||
+      targetAmount <= currentAmount
+    )
+      return;
 
-      [{ text: "OK", onPress: () => console.log("OK Pressed") }]
-    );
+    Alert.alert("แจ้งเตือน", "ให้ดื่มน้ำแล้วนะ เวลา " + targetTime, [
+      { text: "OK", onPress: () => console.log("OK Pressed") },
+    ]);
+  };
 
   useEffect(() => {
     const interVal = setInterval(() => {
@@ -46,7 +59,12 @@ export default function TimeCircle({ radius, isComplete }: TimeCircleProps) {
       activeStrokeWidth={14}
       inActiveStrokeWidth={14}
     >
-      <Text>{currentTime}</Text>
+      <StatBoard
+        targetTime={targetTime}
+        isComplete={isComplete}
+        targetAmount={targetAmount}
+        currentAmount={currentAmount}
+      />
     </CircularProgressBase>
   );
 }
