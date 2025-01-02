@@ -18,10 +18,13 @@ import waterAmount from "@/stores/waterAmount";
 import ButtonAdd from "@/components/ButtonAdd";
 import ModalWaterInput from "@/components/ModalWaterInput";
 import { sumTable } from "@/utils/formatData";
+import tableData from "@/stores/tableData";
 
 export default function Dashboard() {
   const { totalAmount, currentAmount, setCurrentAmount, setTotalAmount } =
     waterAmount();
+  const { setDataTable } = tableData();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [waterOpen, setWaterOpen] = useState(false);
   const [wt, setWt] = useState(0);
@@ -51,6 +54,7 @@ export default function Dashboard() {
       if (!!data && data.length > 0) {
         const sum = sumTable(data as { amount: number }[]);
         setCurrentAmount(sum);
+        setDataTable(data);
       }
     } catch (e) {
       console.log(e);
