@@ -5,13 +5,15 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { styles, style2 } from "@/styles";
 import DrinkChoice from "./drinkScale/DrinkChoice.";
 import AddCloseBtn from "./AddCloseBtn";
+import dbHandle from "@/dbFunc/dbHandle";
 
 type ModalWaterInputProps = {
   setModal: (modal: boolean) => void;
+  fetchData: () => void;
 };
 
 export default function ModalWaterInput(props: ModalWaterInputProps) {
@@ -27,14 +29,27 @@ export default function ModalWaterInput(props: ModalWaterInputProps) {
   };
 
   const handleSubmit = async (amount: string) => {
-    console.log(amount);
+    if (!amount) return;
+    await dbHandle.createRecord(Number(amount));
+    props.fetchData();
+    props.setModal(false);
   };
+
+  useEffect(() => {
+    if (!useScale) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    } else {
+      inputRef.current?.blur();
+    }
+  }, [useScale]);
 
   return (
     <View
       style={{
         width: w,
-        height: h * (useScale ? 1.5 : 0.9),
+        height: useScale ? h * 0.7 : h * 0.5,
         ...style2.modalStyle,
       }}
     >

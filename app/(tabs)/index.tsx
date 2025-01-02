@@ -2,11 +2,12 @@ import {
   View,
   Text,
   Modal,
-  SafeAreaView,
   StatusBar,
   useColorScheme,
   Dimensions,
 } from "react-native";
+
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import React, { useEffect, useState } from "react";
 import memoryWt from "../../memFunc/memoryWt";
@@ -16,6 +17,7 @@ import WaterCircle from "@/components/WaterCircle";
 import waterAmount from "@/stores/waterAmount";
 import ButtonAdd from "@/components/ButtonAdd";
 import ModalWaterInput from "@/components/ModalWaterInput";
+import { sumTable } from "@/utils/formatData";
 
 export default function Dashboard() {
   const { totalAmount, currentAmount, setCurrentAmount, setTotalAmount } =
@@ -43,6 +45,18 @@ export default function Dashboard() {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const data = await dbHandle.getAllRows();
+      if (!!data && data.length > 0) {
+        const sum = sumTable(data as { amount: number }[]);
+        setCurrentAmount(sum);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     fetchStoredWt();
     fetchTable();
@@ -58,7 +72,13 @@ export default function Dashboard() {
   }, [wt]);
   const colorScheme = useColorScheme();
   return (
-    <>
+    <SafeAreaProvider
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "space-around",
+      }}
+    >
       <SafeAreaView
         style={{
           flex: 1,
@@ -73,7 +93,11 @@ export default function Dashboard() {
           showHideTransition={"fade"}
           // hidden={true}
         />
-        <WaterCircle totalAmount={totalAmount} currentAmount={currentAmount} />
+        <WaterCircle
+          totalAmount={totalAmount}
+          currentAmount={currentAmount}
+          fetchData={fetchData}
+        />
         <ButtonAdd
           width={width}
           height={height}
@@ -81,23 +105,27 @@ export default function Dashboard() {
         />
       </SafeAreaView>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalOpen}
-        onRequestClose={() => setModalOpen(false)}
-      >
-        <ModalWtInput wt={wt} cbSetWt={(wt: number) => setWt(wt)} />
-      </Modal>
+      <SafeAreaView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalOpen}
+          onRequestClose={() => setModalOpen(false)}
+        >
+          <ModalWtInput wt={wt} cbSetWt={(wt: number) => setWt(wt)} />
+        </Modal>
+      </SafeAreaView>
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={waterOpen}
-        onRequestClose={() => setWaterOpen(false)}
-      >
-        <ModalWaterInput setModal={setWaterOpen} />
-      </Modal>
-    </>
+      <SafeAreaView>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={waterOpen}
+          onRequestClose={() => setWaterOpen(false)}
+        >
+          <ModalWaterInput fetchData={fetchData} setModal={setWaterOpen} />
+        </Modal>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

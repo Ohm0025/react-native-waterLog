@@ -20,6 +20,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="table"
+        options={{
+          title: "Table",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={28} name="table" color={color} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
         name="calendar"
         options={{
           title: "Calendar",
