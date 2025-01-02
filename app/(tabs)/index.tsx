@@ -19,11 +19,14 @@ import ButtonAdd from "@/components/ButtonAdd";
 import ModalWaterInput from "@/components/ModalWaterInput";
 import { sumTable } from "@/utils/formatData";
 import tableData from "@/stores/tableData";
+import dateStore from "@/stores/dateStore";
+import HeaderApp from "@/components/HeaderApp";
 
 export default function Dashboard() {
   const { totalAmount, currentAmount, setCurrentAmount, setTotalAmount } =
     waterAmount();
   const { setDataTable } = tableData();
+  const { currentDate } = dateStore();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [waterOpen, setWaterOpen] = useState(false);
@@ -74,7 +77,9 @@ export default function Dashboard() {
       setModalOpen(true);
     }
   }, [wt]);
+
   const colorScheme = useColorScheme();
+
   return (
     <SafeAreaProvider
       style={{
@@ -97,6 +102,7 @@ export default function Dashboard() {
           showHideTransition={"fade"}
           // hidden={true}
         />
+        <HeaderApp currentDate={currentDate} />
         <WaterCircle
           totalAmount={totalAmount}
           currentAmount={currentAmount}

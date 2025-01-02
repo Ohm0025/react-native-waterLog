@@ -11,3 +11,5 @@ export const extractTime = (str: string) => {
 
   return `${hours}:${minutes}:${seconds}`;
 };
+
+export const extractDateMoYr = (date: string) => {};

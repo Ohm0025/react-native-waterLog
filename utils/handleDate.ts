@@ -21,6 +21,27 @@ export const setNextTime = (time: string) => {
   }`;
 };
 
+export const isBetweenTime = (
+  timeStart: string,
+  timeEnd: string,
+  currentTime: string
+) => {
+  const [currentHr, currentMin] = currentTime.split(":");
+  const [startHr, startMin] = timeStart.split(":");
+  const [endHr, endMin] = timeEnd.split(":");
+
+  if (currentHr >= endHr) {
+    return false;
+  } else {
+    //currentHr < endHr
+    if (currentHr < startHr) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 export const differeceTime = (
   time1: string,
   time2: string,

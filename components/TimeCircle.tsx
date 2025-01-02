@@ -1,15 +1,24 @@
 import timeStore from "@/stores/timeStore";
-import { differeceTime, getNowTime, setNextTime } from "@/utils/handleDate";
+import {
+  compareDate,
+  differeceTime,
+  getNowDate,
+  getNowTime,
+  isBetweenTime,
+  setNextTime,
+} from "@/utils/handleDate";
 import { useEffect } from "react";
 import { Alert, Text } from "react-native";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
 import StatBoard from "./StatBoard";
+import dateStore from "@/stores/dateStore";
 
 type TimeCircleProps = {
   radius: number;
   isComplete?: boolean;
   targetAmount: number;
   currentAmount: number;
+  fetchAmount: () => void;
 };
 
 export default function TimeCircle({
@@ -17,9 +26,17 @@ export default function TimeCircle({
   isComplete,
   targetAmount,
   currentAmount,
+  fetchAmount,
 }: TimeCircleProps) {
-  const { currentTime, targetTime, timeEnd, setTargetTime, setCurrentTime } =
-    timeStore();
+  const {
+    currentTime,
+    targetTime,
+    timeStart,
+    timeEnd,
+    setTargetTime,
+    setCurrentTime,
+  } = timeStore();
+  const { currentDate, setCurrentDate } = dateStore();
 
   const createTwoButtonAlert = () => {
     if (
@@ -42,6 +59,16 @@ export default function TimeCircle({
         createTwoButtonAlert();
         setTargetTime(setNextTime(nowTime));
       }
+      if (currentDate === "") {
+        setCurrentDate(getNowDate());
+        return;
+      }
+      const dateNow = getNowDate();
+      const diffDate = compareDate(currentDate, dateNow);
+      if (diffDate != 0) {
+        fetchAmount();
+        setCurrentDate(dateNow);
+      }
     }, 1000);
 
     return () => {
@@ -52,7 +79,11 @@ export default function TimeCircle({
   return (
     <CircularProgressBase
       radius={radius}
-      value={differeceTime(currentTime, targetTime)}
+      value={
+        isComplete || !isBetweenTime(timeStart, timeEnd, targetTime)
+          ? 100
+          : differeceTime(currentTime, targetTime)
+      }
       activeStrokeColor={"green"}
       inActiveStrokeOpacity={0.2}
       inActiveStrokeColor="gray"
@@ -60,6 +91,8 @@ export default function TimeCircle({
       inActiveStrokeWidth={14}
     >
       <StatBoard
+        timeEnd={timeEnd}
+        timeStart={timeStart}
         targetTime={targetTime}
         isComplete={isComplete}
         targetAmount={targetAmount}
