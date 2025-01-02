@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   StatusBar,
   useColorScheme,
+  Dimensions,
 } from "react-native";
 
 import React, { useEffect, useState } from "react";
@@ -13,12 +14,17 @@ import ModalWtInput from "../../components/ModalWtInput";
 import dbHandle from "@/dbFunc/dbHandle";
 import WaterCircle from "@/components/WaterCircle";
 import waterAmount from "@/stores/waterAmount";
+import ButtonAdd from "@/components/ButtonAdd";
+import ModalWaterInput from "@/components/ModalWaterInput";
 
 export default function Dashboard() {
   const { totalAmount, currentAmount, setCurrentAmount, setTotalAmount } =
     waterAmount();
   const [modalOpen, setModalOpen] = useState(false);
+  const [waterOpen, setWaterOpen] = useState(false);
   const [wt, setWt] = useState(0);
+
+  const { width, height } = Dimensions.get("window");
 
   const fetchStoredWt = async () => {
     try {
@@ -53,7 +59,13 @@ export default function Dashboard() {
   const colorScheme = useColorScheme();
   return (
     <>
-      <SafeAreaView style={{ flex: 1, alignItems: "center" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
         <StatusBar
           animated={true}
           backgroundColor={colorScheme === "dark" ? "#000" : "#fff"}
@@ -62,6 +74,11 @@ export default function Dashboard() {
           // hidden={true}
         />
         <WaterCircle totalAmount={totalAmount} currentAmount={currentAmount} />
+        <ButtonAdd
+          width={width}
+          height={height}
+          setIsOpenModal={setWaterOpen}
+        />
       </SafeAreaView>
 
       <Modal
@@ -71,6 +88,15 @@ export default function Dashboard() {
         onRequestClose={() => setModalOpen(false)}
       >
         <ModalWtInput wt={wt} cbSetWt={(wt: number) => setWt(wt)} />
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={waterOpen}
+        onRequestClose={() => setWaterOpen(false)}
+      >
+        <ModalWaterInput setModal={setWaterOpen} />
       </Modal>
     </>
   );
