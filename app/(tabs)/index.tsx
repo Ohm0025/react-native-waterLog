@@ -8,8 +8,9 @@ import {
 } from "react-native";
 
 import React, { useEffect, useState } from "react";
-import memoryWt from "../memFunc/memoryWt";
-import ModalWtInput from "../components/ModalWtInput";
+import memoryWt from "../../memFunc/memoryWt";
+import ModalWtInput from "../../components/ModalWtInput";
+import dbHandle from "@/dbFunc/dbHandle";
 
 export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,16 +18,28 @@ export default function Dashboard() {
   const [wt, setWt] = useState(0);
 
   const fetchStoredWt = async () => {
-    const storedWt = await memoryWt.loadStoredWt();
-    setWt(storedWt);
+    try {
+      const storedWt = await memoryWt.loadStoredWt();
+      setWt(storedWt);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const fetchTable = async () => {
+    try {
+      await dbHandle.createTable();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
     fetchStoredWt();
+    fetchTable();
   }, []);
 
   useEffect(() => {
-    console.log(wt);
     if (wt > 0) {
       setModalOpen(false);
     } else {
